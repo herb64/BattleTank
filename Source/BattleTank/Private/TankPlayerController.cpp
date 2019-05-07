@@ -13,13 +13,12 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Warning, TEXT("TankPlayerController - beginplay..."));
 	auto ControlledTank = GetControlledTank();
 	if (!ControlledTank)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No possessed pawn..."));
+		UE_LOG(LogTemp, Warning, TEXT("Player Controller: no possessed pawn..."));
 	} else {
-		UE_LOG(LogTemp, Warning, TEXT("Possessed Pawn: %s"), *ControlledTank->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Player Controller: possessed Pawn = %s"), *ControlledTank->GetName());
 	}
 }
 
@@ -28,12 +27,12 @@ void ATankPlayerController::BeginPlay()
 void ATankPlayerController::OnPossess(APawn* possessedPawn) 
 {
 	Super::OnPossess(possessedPawn);
-	UE_LOG(LogTemp, Warning, TEXT("Possessing Pawn: %s"), *possessedPawn->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Just experiment... Possessing Pawn: %s"), *possessedPawn->GetName());
 }
 
 /// Experimental code with callbacks - does only log twice after stopping play
 void ATankPlayerController::OnUnPossess() 
 {
 	Super::OnUnPossess();
-	UE_LOG(LogTemp, Warning, TEXT("Unpossessing currently possessed pawn"));
+	//UE_LOG(LogTemp, Warning, TEXT("Just experment... Unpossessing currently possessed pawn"));
 }

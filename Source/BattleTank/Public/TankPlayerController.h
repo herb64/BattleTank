@@ -25,4 +25,10 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 	protected:
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
+		virtual void Tick(float DeltaSeconds) override;
+
+	private:
+		// makes the tank pointing the barrel towards the destination where crosshair
+		// intersects the world.
+		void AimTowardsCrosshair();
 };

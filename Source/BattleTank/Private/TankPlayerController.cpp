@@ -22,6 +22,16 @@ void ATankPlayerController::BeginPlay()
 	}
 }
 
+
+// Tick manually overriden
+void ATankPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UE_LOG(LogTemp, Warning, TEXT("Player Controller: tick - %f"), DeltaSeconds);
+	AimTowardsCrosshair();
+}
+
+
 /// Experimental code with callbacks - does only log once after starting Play
 /// No logs written when using Eject or F8...
 void ATankPlayerController::OnPossess(APawn* possessedPawn) 
@@ -35,4 +45,13 @@ void ATankPlayerController::OnUnPossess()
 {
 	Super::OnUnPossess();
 	//UE_LOG(LogTemp, Warning, TEXT("Just experment... Unpossessing currently possessed pawn"));
+}
+
+
+void ATankPlayerController::AimTowardsCrosshair()
+{
+	if (!GetControlledTank()) return;
+
+	// do a line trace for intersection with world to check destination
+
 }

@@ -18,8 +18,13 @@ class BATTLETANK_API ATankAIController : public AAIController
 	
 	public:
 		ATank* GetControlledTank() const;
+		// Actually, we should return a TArray... ?
+		ATank* GetPlayerTank() const;
 
 	protected:
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
+
+	private:
+		ATank* PlayerTank = nullptr;
 };

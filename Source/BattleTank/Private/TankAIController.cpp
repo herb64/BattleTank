@@ -2,12 +2,12 @@
 
 
 #include "TankAIController.h"
+// Since 4.16, includes are needed to make autocompletion in VS work. 
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 
-ATank* ATankAIController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
 
+/// BeginPlay manually overridden to initialize stuff
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -19,5 +19,32 @@ void ATankAIController::BeginPlay()
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("AI Controller %s: possessed Pawn: %s"), *GetName(), *ControlledTank->GetName());
+	}
+
+	PlayerTank = GetPlayerTank();
+}
+
+/// Get pointer to our own controlled Tank
+ATank* ATankAIController::GetControlledTank() const
+{
+	return Cast<ATank>(GetPawn());
+}
+
+/// Get pointer to the Player Tank controlled by the first player controller
+/// NOT handling multiple 
+ATank * ATankAIController::GetPlayerTank() const
+{
+	// We might use the number to decide, if we need an iterator..
+	UE_LOG(LogTemp, Warning, TEXT("AI Controller: %d player controllers present."), GetWorld()->GetNumPlayerControllers());
+	APlayerController* pPC = GetWorld()->GetFirstPlayerController();
+	if (pPC)
+	{
+		ATank* pPT = Cast<ATank>((pPC->GetPawn()));
+		UE_LOG(LogTemp, Warning, TEXT("AI Controller %s: found Enemy Player Tank %s to fight against."), *GetName(), *pPT->GetName());
+		return pPT;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("AI Contoller %s: could not detect any enemy Player Tank to fight against."), *GetName());
+		return nullptr;
 	}
 }

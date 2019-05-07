@@ -31,4 +31,14 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 		// makes the tank pointing the barrel towards the destination where crosshair
 		// intersects the world.
 		void AimTowardsCrosshair();
+		bool GetSightRayHitLocation(FVector& OutHitLocation) const;
+
+		bool GetLookDirection(FVector&) const;
+
+		// Crosshair postion for aiming, relative to screen position in X direction
+		UPROPERTY(EditAnywhere, meta = (DisplayName = "Crosshair X"))
+		float CrosshairWidgetPositionX = 0.5f;
+		// Crosshair postion for aiming, relative to screen position in Y direction, starting at top
+		UPROPERTY(EditAnywhere, meta = (DisplayName = "Crosshair Y"))
+		float CrosshairWidgetPositionY = 0.333333f;
 };

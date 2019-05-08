@@ -39,12 +39,11 @@ void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetControlledTank()) return;
 
-	// Find the point in the world we are currently aiming at
-	FVector hit = FVector(0.0f, 0.0f, 1000.0f); // Init to strange value, useful for debugging
-	if (GetSightRayHitLocation(hit))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Hit at %s"), *hit.ToString());
-	}
+	FVector OutHit = FVector(0.0f, 0.0f, 1.0f);
+	if (!GetSightRayHitLocation(OutHit)) return;
+	
+	GetControlledTank()->AimAt(OutHit);
+	
 
 }
 
@@ -56,23 +55,13 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	// This needs Screenx/y as input and delivers a position and a direction VECTOR (no rotator for direction)
 
 	// 1. Get Look direction vector
-	FVector lookDirection = FVector(1.0f);
+	FVector lookDirection = FVector(0.0f, 0.0f, 1.0f);
 	if (!GetLookDirection(lookDirection)) return false;
-	UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *lookDirection.ToString());
 	
 	// 2. Get hit location for this look direction vector
-	FVector hitLocation = FVector(1.0f);
-	if (!GetLookVectorHitLocation(lookDirection, hitLocation))
-	{
-		UE_LOG(LogTemp, Error, TEXT("No hit location"));
-	}
-	else {
-		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitLocation.ToString());
-	}
-
-	
-
-	OutHitLocation = FVector(177.0f, 177.0f, 17.0f);
+	FVector hitLocation = FVector(0.0f, 0.0f, 1.0f);
+	if (!GetLookVectorHitLocation(lookDirection, hitLocation)) return false;
+	OutHitLocation = hitLocation;
 	return true;
 }
 
@@ -86,8 +75,6 @@ bool ATankPlayerController::GetLookDirection(FVector& CamWorldDir) const
 	// deproject needs float value as input for screen position - how about using FVector2D for this as in course
 	float CrosshairScreenPositionX = (float)ViewportSizeX * CrosshairWidgetPositionX;
 	float CrosshairScreenPositionY = (float)ViewportSizeY * CrosshairWidgetPositionY;
-
-	//UE_LOG(LogTemp, Warning, TEXT("ViewPort: %d / %d, Crosshair %f / %f"), ViewportSizeX, ViewportSizeY, CrosshairScreenPositionX, CrosshairScreenPositionY);
 
 	FVector CamWorldLoc;
 	// This returns values in Camera terms. We need the world direction.
@@ -133,7 +120,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector lookDirection, FVec
 		return true;
 	}
 
-	OutHitLocation = FVector(0.0f);
+	OutHitLocation = FVector(0.0f, 0.0f, 1.0f);
 	return false;
 }
 

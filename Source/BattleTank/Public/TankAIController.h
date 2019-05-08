@@ -24,7 +24,9 @@ class BATTLETANK_API ATankAIController : public AAIController
 	protected:
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
+		virtual void Tick(float DeltaSeconds) override;
 
 	private:
 		ATank* PlayerTank = nullptr;
+		void AimTowardsPlayerTank();
 };

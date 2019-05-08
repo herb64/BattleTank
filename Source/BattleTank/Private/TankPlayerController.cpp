@@ -3,6 +3,11 @@
 
 #include "TankPlayerController.h"
 
+// Since 4.16, includes are needed to make autocompletion in VS work. 
+#include "Engine/World.h"
+#include "Engine/Public/DrawDebugHelpers.h"	// e.g. DrawDebugLine
+
+
 /// Get pointer to the Tank object controlled by this Player Controller
 ATank* ATankPlayerController::GetControlledTank() const
 {
@@ -23,28 +28,10 @@ void ATankPlayerController::BeginPlay()
 }
 
 
-// Tick manually overriden
 void ATankPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	//UE_LOG(LogTemp, Warning, TEXT("Player Controller: tick - %f"), DeltaSeconds);
 	AimTowardsCrosshair();
-}
-
-
-/// Experimental code with callbacks - does only log once after starting Play
-/// No logs written when using Eject or F8...
-void ATankPlayerController::OnPossess(APawn* possessedPawn) 
-{
-	Super::OnPossess(possessedPawn);
-	//UE_LOG(LogTemp, Warning, TEXT("Just experiment... Possessing Pawn: %s"), *possessedPawn->GetName());
-}
-
-/// Experimental code with callbacks - does only log twice after stopping play
-void ATankPlayerController::OnUnPossess() 
-{
-	Super::OnUnPossess();
-	//UE_LOG(LogTemp, Warning, TEXT("Just experment... Unpossessing currently possessed pawn"));
 }
 
 
@@ -52,8 +39,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetControlledTank()) return;
 
-	// We actually do control a tank, so lets find the point in the world we are currently aiming at
-	// result is written into hit vector.
+	// Find the point in the world we are currently aiming at
 	FVector hit = FVector(0.0f, 0.0f, 1000.0f); // Init to strange value, useful for debugging
 	if (GetSightRayHitLocation(hit))
 	{
@@ -69,18 +55,28 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	// https://api.unrealengine.com/INT/API/Runtime/Engine/GameFramework/APlayerController/DeprojectScreenPositionToWorld/index.html
 	// This needs Screenx/y as input and delivers a position and a direction VECTOR (no rotator for direction)
 
+	// 1. Get Look direction vector
 	FVector lookDirection = FVector(1.0f);
 	if (!GetLookDirection(lookDirection)) return false;
-
-	UE_LOG(LogTemp, Warning, TEXT("Dir: %s"), *lookDirection.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Direction: %s"), *lookDirection.ToString());
 	
-	// next going for a line trace starting at our tank in direction of the aim point
+	// 2. Get hit location for this look direction vector
+	FVector hitLocation = FVector(1.0f);
+	if (!GetLookVectorHitLocation(lookDirection, hitLocation))
+	{
+		UE_LOG(LogTemp, Error, TEXT("No hit location"));
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitLocation.ToString());
+	}
+
+	
 
 	OutHitLocation = FVector(177.0f, 177.0f, 17.0f);
 	return true;
 }
 
-/// get the current look direction
+
 bool ATankPlayerController::GetLookDirection(FVector& CamWorldDir) const
 {
 	// Get Viewport information - using player controller method
@@ -102,3 +98,43 @@ bool ATankPlayerController::GetLookDirection(FVector& CamWorldDir) const
 		CamWorldDir			// this is, what we are interested in
 	);
 }
+
+
+bool ATankPlayerController::GetLookVectorHitLocation(FVector lookDirection, FVector& OutHitLocation) const
+{
+	FHitResult hitResult;
+
+	FVector vStart = PlayerCameraManager->GetCameraLocation();
+	FVector vEnd = vStart + lookDirection * LineTraceRange;
+
+	if (GetWorld()->LineTraceSingleByChannel(
+		hitResult,
+		vStart,
+		vEnd,
+		ECollisionChannel::ECC_Visibility							// hit anything visible
+		//FCollisionQueryParams(ECollisionChannel::ECC_Visibility),
+		//FCollisionResponseParams(ECollisionResponse::ECR_Overlap)
+		))
+	{
+		OutHitLocation = hitResult.Location;
+		DrawDebugLine(
+			GetWorld(),
+			vStart,
+			OutHitLocation,
+			FColor::Yellow,
+			false,
+			4.0f,
+			0,
+			1.0f
+		);
+
+		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitResult.GetActor()->GetName());
+		
+		return true;
+	}
+
+	OutHitLocation = FVector(0.0f);
+	return false;
+}
+
+

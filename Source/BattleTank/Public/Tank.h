@@ -32,7 +32,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
-	UFUNCTION(BlueprintCallable, Category="Setup")
+	UFUNCTION(BlueprintCallable, Category=Setup)
 	void SetBarrelReference(UStaticMeshComponent* BarrelToSet);
+
+private:
+	UPROPERTY(EditAnywhere, Category = Firing, meta = (DisplayName = "Projectile Speed"))
+	float LaunchSpeed = 100000.0f;
 
 };

@@ -2,6 +2,7 @@
 
 
 #include "TankAimComponent.h"
+#include "TankBarrel.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,7 +15,7 @@ UTankAimComponent::UTankAimComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UTankAimComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+void UTankAimComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 }
@@ -68,7 +69,24 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 	
 	{
 		AimDirection = OutSuggestedVelocity.GetSafeNormal();
-	} 
-	UE_LOG(LogTemp, Warning, TEXT("%s: Aim Direction: %s (%f)"), *GetOwner()->GetName(), *AimDirection.ToString(), OutSuggestedVelocity.Size());
+		UE_LOG(LogTemp, Warning, TEXT("%s: Aim Direction: %s (%f)"), *GetOwner()->GetName(), *AimDirection.ToString(), OutSuggestedVelocity.Size());
+
+		MoveBarrelTowards(AimDirection);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s: No aiming direction could be determined"), *GetOwner()->GetName());
+	}
+}
+
+void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	// Barrel inherits from USceneComponent - very useful methods here
+	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
+	FRotator AimRotator = AimDirection.Rotation();
+	FRotator DeltaRotator = AimRotator - BarrelRotator;
+
+	UE_LOG(LogTemp, Warning, TEXT("Rot: %s / %s"), *BarrelRotator.ToString(), *AimRotator.ToString());
+
+	Barrel->Elevate(5.0f);
+
 }
 

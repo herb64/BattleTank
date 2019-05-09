@@ -10,8 +10,7 @@
 // Sets default values for this component's properties
 UTankAimComponent::UTankAimComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	// TODO: should the aim component tick??
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -35,7 +34,11 @@ void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 {
-	if (!Barrel) return;
+	if (!Barrel)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Barrel Component - Check BP_Tank SetBarrelReference call"));
+		return;
+	}
 
 	// Using component location here, later go for socket location when creating
 	// a socket for the projectile at the top of the barrel
@@ -47,9 +50,7 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 		*hitLocation.ToString(),
 		*barrelLocation.ToString());*/
 
-	FVector OutSuggestedVelocity = FVector(0.0f);
-	FVector AimDirection = FVector(0.0f);
-	TArray<AActor*> ActorsToIgnore;							// shouldn't we ignore ourselves?
+	FVector OutSuggestedVelocity = FVector(0.0f);			// Aim direction when normalized
 
 	if (UGameplayStatics::SuggestProjectileVelocity(
 		this,
@@ -60,17 +61,10 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 		false,
 		0.0f,
 		0.0f,
-		ESuggestProjVelocityTraceOption::DoNotTrace
-		//ESuggestProjVelocityTraceOption::TraceFullPath,	// These parameters cause problems
-		//FCollisionResponseParams::DefaultResponseParam,	// not returning suggestions quite
-		//ActorsToIgnore,									// often. Not sure, which one exactly
-		//false												// is responsible --- TODO
-	))
-	
-	{
-		AimDirection = OutSuggestedVelocity.GetSafeNormal();
-		UE_LOG(LogTemp, Warning, TEXT("%s: Aim Direction: %s (%f)"), *GetOwner()->GetName(), *AimDirection.ToString(), OutSuggestedVelocity.Size());
-
+		ESuggestProjVelocityTraceOption::DoNotTrace			// NEEDED, ELSE GETTING MANY NON RESULTS
+	)) {
+		FVector AimDirection = OutSuggestedVelocity.GetSafeNormal();
+		//UE_LOG(LogTemp, Warning, TEXT("%s: Aiming direction %s"), *GetOwner()->GetName(), *AimDirection.ToString());
 		MoveBarrelTowards(AimDirection);
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("%s: No aiming direction could be determined"), *GetOwner()->GetName());
@@ -79,14 +73,6 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 
 void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	// Barrel inherits from USceneComponent - very useful methods here
-	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
-	FRotator AimRotator = AimDirection.Rotation();
-	FRotator DeltaRotator = AimRotator - BarrelRotator;
-
-	UE_LOG(LogTemp, Warning, TEXT("Rot: %s / %s"), *BarrelRotator.ToString(), *AimRotator.ToString());
-
-	Barrel->Elevate(5.0f);
-
+	Barrel->Elevate(0.7f);
 }
 

@@ -2,6 +2,7 @@
 
 
 #include "TankAIController.h"
+#include "Tank.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"

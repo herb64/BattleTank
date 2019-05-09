@@ -2,6 +2,7 @@
 
 
 #include "TankPlayerController.h"
+#include "tank.h"
 
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "Engine/World.h"
@@ -43,8 +44,6 @@ void ATankPlayerController::AimTowardsCrosshair()
 	if (!GetSightRayHitLocation(OutHit)) return;
 	
 	GetControlledTank()->AimAt(OutHit);
-	
-
 }
 
 bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) const

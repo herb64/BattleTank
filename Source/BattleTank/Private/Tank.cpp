@@ -2,48 +2,40 @@
 
 
 #include "Tank.h"
+#include "TankAimComponent.h"
+
 
 // Sets default values
 ATank::ATank()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	// no need to protect pointers as added in construction
+	PrimaryActorTick.bCanEverTick = false;	// Tank does not need to tick
 	TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
 }
-
 
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void ATank::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	
-}
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
+
+// This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimComponent->SetBarrelReference(BarrelToSet);
 }
 
+
 void ATank::AimAt(FVector hitLocation)
 {
+	// no need to protect pointers as added in construction ???
 	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
-	//UE_LOG(LogTemp, Warning, TEXT("Tank %s aiming at world hit location %s"), *GetName(), *hitLocation.ToString());
 }

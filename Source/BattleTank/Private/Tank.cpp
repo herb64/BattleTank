@@ -20,7 +20,9 @@ void ATank::BeginPlay()
 }
 
 
-// Called to bind functionality to input
+// Called to bind functionality to input - strange, that intellisense often complains
+// about AActor not having that member function, but ATank is a Pawn! 
+// seems to be somewhat timing related... ???
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -31,6 +33,12 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimComponent->SetBarrelReference(BarrelToSet);
+}
+
+// This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
+void ATank::SetTurretReference(UTankTurret* TurretToSet)
+{
+	TankAimComponent->SetTurretReference(TurretToSet);
 }
 
 

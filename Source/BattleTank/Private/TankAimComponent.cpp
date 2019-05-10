@@ -3,6 +3,7 @@
 
 #include "TankAimComponent.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
@@ -18,6 +19,11 @@ UTankAimComponent::UTankAimComponent()
 void UTankAimComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
+}
+
+void UTankAimComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
 }
 
 // Called when the game starts
@@ -105,5 +111,6 @@ void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
 	FRotator DeltaRotator = AimRotator - BarrelRotator;
 	Barrel->Elevate(DeltaRotator.Pitch);
+	Turret->Rotate(77.0f);
 }
 

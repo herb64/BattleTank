@@ -33,7 +33,8 @@ public:
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
 private:
-	UPROPERTY(EditAnywhere, Category = Firing, meta = (DisplayName = "Projectile Speed"))
-	float LaunchSpeed = 100000.0f;
+	// Speed of Projectile. This is used to calculate the aiming direction in combination with the barrel endpoint and the desired hit location.
+	UPROPERTY(EditAnywhere, Category = Firing, meta = (DisplayName = "Projectile Speed", UIMin = "3000.0", UIMax = "30000.0", ClampMin = "3000.0", ClampMax = "30000.0"))
+	float LaunchSpeed = 10000.0f;
 
 };

@@ -103,19 +103,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector lookDirection, FVec
 		))
 	{
 		OutHitLocation = hitResult.Location;
-		/*DrawDebugLine(
-			GetWorld(),
-			vStart,
-			OutHitLocation,
-			FColor::Yellow,
-			false,
-			4.0f,
-			0,
-			1.0f
-		);*/
-
 		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitResult.GetActor()->GetName());
-		
 		return true;
 	}
 

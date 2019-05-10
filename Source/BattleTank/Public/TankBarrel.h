@@ -17,9 +17,13 @@ class BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 public:
 	void Elevate(float RelativeSpeed);
 
+	// Draw debug lines Barrel: projectile>hitlocation in red and projectile>aimdirection in yellow
+	UPROPERTY(EditAnyWhere, Category = Debugging, meta = (DisplayName = "Debuglines"))
+	bool bDrawDebugLines = false;
+
 private:
 	// Maximum Barrel Eleveation Speed in degrees per second. This is used in combination with Relative Speed factor 1.0 .. -1.0 for up/down movement
-	UPROPERTY(EditAnywhere, Category = Movability, meta = (DisplayName = "Max. Speed", UIMin = "5.0", UIMax = "20.0", ClampMin = "5.0", ClampMax = "20.0"))
+	UPROPERTY(EditAnywhere, Category = Movability, meta = (DisplayName = "Barrel Speed", UIMin = "5.0", UIMax = "20.0", ClampMin = "5.0", ClampMax = "20.0"))
 	float MaxElevationSpeed = 10.0f;
 
 	// Minimum Barrel Elevation in degrees. Determines lowest position.

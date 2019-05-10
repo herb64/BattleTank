@@ -9,13 +9,14 @@ void UTankBarrel::Elevate(float RelativeSpeed)
 	///       do not add any additional code to switch off ticking, unless performance
 	///       profiling makes this necessary.
 
-	// Relative Speed: -1 to +1
-	float Speed = MaxElevationSpeed * RelativeSpeed;
+	// Barrel inherits from USceneComponent - a lot of members from this are used here!!!
+	RelativeSpeed = FMath::Clamp(RelativeSpeed, -1.0f, 1.0f);
+	float ElevationDelta = MaxElevationSpeed * RelativeSpeed * GetWorld()->DeltaTimeSeconds;
+	float RawNewElevation = RelativeRotation.Pitch + ElevationDelta;
+	float ClampedElevation = FMath::Clamp(RawNewElevation, MinimumElevation, MaximumElevation);
 
-	// Barrel inherits from USceneComponent - very useful methods here
-	FRotator BarrelRotator = GetForwardVector().Rotation();
-	//FRotator AimRotator = AimDirection.Rotation();
-	//FRotator DeltaRotator = AimRotator - BarrelRotator;
+	// TODO: this makes camera jitter
+	SetRelativeRotation(FRotator(ClampedElevation, 0.0f, 0.0f));
 
-	UE_LOG(LogTemp, Warning, TEXT("%f > %s elevate with %f degrees per second"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName(), Speed);
+	UE_LOG(LogTemp, Warning, TEXT("%f > %s elevation is now %f (Delta: %f)"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName(), ClampedElevation, ElevationDelta);
 }

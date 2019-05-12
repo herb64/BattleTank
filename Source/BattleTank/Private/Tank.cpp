@@ -3,6 +3,8 @@
 
 #include "Tank.h"
 #include "TankAimComponent.h"
+#include "Projectile.h"
+#include "TankBarrel.h"
 
 
 // Sets default values
@@ -33,6 +35,8 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimComponent->SetBarrelReference(BarrelToSet);
+	// TODO - not mentioned in course video at that point - might comment on that, but we need to initialize our local variable here
+	Barrel = BarrelToSet;		
 }
 
 // This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
@@ -46,4 +50,23 @@ void ATank::AimAt(FVector hitLocation)
 {
 	// no need to protect pointers as added in construction ???
 	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
+}
+
+void ATank::Fire()
+{
+	UE_LOG(LogTemp, Error, TEXT("FIRE"));
+	if (!Barrel)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Barrel at FIRE"));
+		return;
+	}
+
+	/// See http://api.unrealengine.com/INT/API/Runtime/Engine/Engine/UWorld/SpawnActor/4/?lang=ja
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile")),
+		//FRotator::ZeroRotator
+		Barrel->GetSocketRotation(FName("Projectile"))
+		);
 }

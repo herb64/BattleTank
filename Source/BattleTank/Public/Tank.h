@@ -53,4 +53,10 @@ private:
 
 	// Local Barrel reference for spawning Projectiles in Fire()
 	UTankBarrel* Barrel = nullptr;
+
+	// Reload time, determines maximum fire rate
+	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Reload time"))
+	float ReloadTime = 4.0f;
+
+	float lastFireTime;
 };

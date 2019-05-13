@@ -59,6 +59,11 @@ void ATank::AimAt(FVector hitLocation)
 
 void ATank::Fire()
 {
+	// See also: FPlatformTime::Seconds() - returns double...
+	// We only fire within minimal intervals set within blueprint Parameter ReloadTime
+	if (GetWorld()->GetTimeSeconds() - lastFireTime < ReloadTime) return;
+
+
 	UE_LOG(LogTemp, Error, TEXT("FIRE"));
 	if (!Barrel)
 	{
@@ -79,4 +84,9 @@ void ATank::Fire()
 	{
 		Projectile->Launch(LaunchSpeed);
 	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s: No Projectile spawned"), *GetName());
+	}
+
+	lastFireTime = GetWorld()->GetTimeSeconds();
 }

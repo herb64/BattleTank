@@ -14,18 +14,9 @@ UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
-	
-	public:
-		ATank* GetControlledTank() const;
-		// Actually, we should return a TArray... ?
-		ATank* GetPlayerTank() const;
 
 	protected:
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaSeconds) override;
-
-	private:
-		ATank* PlayerTank = nullptr;
-		void AimTowardsPlayerTank();
 };

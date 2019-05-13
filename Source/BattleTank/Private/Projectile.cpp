@@ -2,7 +2,6 @@
 
 
 #include "Projectile.h"
-#include "ProjectileMoveComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -11,7 +10,7 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create movement component, give it a name
-	projectileMovementComponent = CreateDefaultSubobject<UProjectileMoveComponent>(FName("Projectile Movement"));
+	projectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(FName("Projectile Movement"));
 	if (projectileMovementComponent) 
 	{
 		projectileMovementComponent->SetAutoActivate(false);

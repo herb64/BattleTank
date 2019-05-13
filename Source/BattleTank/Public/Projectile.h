@@ -7,8 +7,6 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Projectile.generated.h"
 
-class UProjectileMoveComponent;
-
 UCLASS()
 class BATTLETANK_API AProjectile : public AActor
 {
@@ -29,5 +27,5 @@ protected:
 
 
 private:
-	UProjectileMoveComponent* projectileMovementComponent = nullptr;
+	UProjectileMovementComponent* projectileMovementComponent = nullptr;
 };

@@ -36,7 +36,12 @@ void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimComponent->SetBarrelReference(BarrelToSet);
 	// TODO - not mentioned in course video at that point - might comment on that, but we need to initialize our local variable here
-	Barrel = BarrelToSet;		
+	Barrel = BarrelToSet;
+	if (Barrel) {
+		// Try to get some infos on Collision, which is blocked by "hidecategories"
+		Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		UE_LOG(LogTemp, Warning, TEXT("%s: Barrel collision enabled = %s "), *Barrel->GetOwner()->GetName(), (Barrel->GetCollisionEnabled() ? TEXT("True") : TEXT("False")))
+	}
 }
 
 // This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
@@ -67,6 +72,11 @@ void ATank::Fire()
 		ProjectileBlueprint,
 		Barrel->GetSocketLocation(FName("Projectile")),
 		//FRotator::ZeroRotator
-		Barrel->GetSocketRotation(FName("Projectile"))
+		Barrel->GetSocketRotation(FName("Projectile"))		// needed for forward vector at launch
 		);
+
+	if (Projectile)
+	{
+		Projectile->Launch(LaunchSpeed);
+	}
 }

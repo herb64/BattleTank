@@ -18,5 +18,5 @@ void UTankBarrel::Elevate(float RelativeSpeed)
 	// TODO: this makes camera jitter
 	SetRelativeRotation(FRotator(ClampedElevation, 0.0f, 0.0f));
 
-	UE_LOG(LogTemp, Warning, TEXT("%f > %s elevation is now %f (Delta: %f)"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName(), ClampedElevation, ElevationDelta);
+	//UE_LOG(LogTemp, Warning, TEXT("%f > %s elevation is now %f (Delta: %f)"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName(), ClampedElevation, ElevationDelta);
 }

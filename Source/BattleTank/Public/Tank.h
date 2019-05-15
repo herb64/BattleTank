@@ -40,23 +40,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Firing)
 	void Fire();
 
-private:
 	// Speed of Projectile. This is used to calculate the aiming direction in combination with the barrel endpoint and the desired hit location.
-	UPROPERTY(EditAnywhere, Category = Firing, meta = (DisplayName = "Projectile Speed", UIMin = "3000.0", UIMax = "30000.0", ClampMin = "3000.0", ClampMax = "30000.0"))
+	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Projectile Speed", UIMin = "3000.0", UIMax = "30000.0", ClampMin = "3000.0", ClampMax = "30000.0"))
 	float LaunchSpeed = 10000.0f;
 
 	/// Instead of using AActor* pointer, use TSubclassOf for type safety to make Editor only offer valid choices to the Artist
 	/// https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TSubclassOf
 	// The Projectile Class to be used (BTW: Choice limited by TSubclassOf)
-	UPROPERTY(EditAnywhere, Category = Setup, meta = (DisplayName = "Projectile Class"))
+	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Projectile Class"))
 	TSubclassOf<AProjectile> ProjectileBlueprint;
-
-	// Local Barrel reference for spawning Projectiles in Fire()
-	UTankBarrel* Barrel = nullptr;
 
 	// Reload time, determines maximum fire rate
 	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Reload time"))
 	float ReloadTime = 4.0f;
+	
+private:
+	// Local Barrel reference for spawning Projectiles in Fire()
+	UTankBarrel* Barrel = nullptr;
 
 	float lastFireTime;
 };

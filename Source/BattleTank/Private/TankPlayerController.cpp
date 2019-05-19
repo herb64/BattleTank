@@ -8,6 +8,10 @@
 #include "Engine/World.h"
 #include "Engine/Public/DrawDebugHelpers.h"	// e.g. DrawDebugLine
 
+#include <EngineGlobals.h>
+#include <Runtime/Engine/Classes/Engine/Engine.h>
+
+
 
 /// Get pointer to the Tank object controlled by this Player Controller
 ATank* ATankPlayerController::GetControlledTank() const
@@ -43,6 +47,20 @@ void ATankPlayerController::AimTowardsCrosshair()
 	FVector OutHit = FVector(0.0f, 0.0f, 1.0f);
 	if (!GetSightRayHitLocation(OutHit)) return;
 	
+
+	/// TEST: make fixed hit location instead of deriving from cross hair. Use values
+	///       reported during simple run without any movement. This avoids any camera
+	///       movement having influence on the hit location point.
+	/*LogTemp: Warning: Crosshair hit location X = -640.108 Y = 1170.590 Z = 99.999
+	LogTemp : Warning : Crosshair hit location X = -638.700 Y = 1166.531 Z = 99.999
+	LogTemp : Warning : Crosshair hit location X = -640.970 Y = 1169.333 Z = 99.999
+	LogTemp : Warning : Crosshair hit location X = -638.653 Y = 1166.756 Z = 99.999*/
+	
+	//OutHit = FVector(-800.0f, 1170.0f, 600.0f);
+
+	
+	// Event with sending in a constant vector for the hit location, the dog tail effect happens
+	//UE_LOG(LogTemp, Error, TEXT("Crosshair hit location %s"), *OutHit.ToString());
 	GetControlledTank()->AimAt(OutHit);
 }
 
@@ -103,7 +121,9 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector lookDirection, FVec
 		))
 	{
 		OutHitLocation = hitResult.Location;
-		UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitResult.GetActor()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitResult.GetActor()->GetName());
+		// https://wiki.unrealengine.com/Logs,_Printing_Messages_To_Yourself_During_Runtime
+		GEngine->AddOnScreenDebugMessage(1, 0.5f, FColor::Orange, FString::Printf(TEXT("Hit: %s"), *hitResult.GetActor()->GetName()));
 		return true;
 	}
 

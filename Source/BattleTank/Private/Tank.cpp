@@ -11,6 +11,7 @@
 ATank::ATank()
 {
 	PrimaryActorTick.bCanEverTick = false;	// Tank does not need to tick
+	// no need to protect pointers as added in construction ???
 	TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
 }
 
@@ -53,7 +54,6 @@ void ATank::SetTurretReference(UTankTurret* TurretToSet)
 
 void ATank::AimAt(FVector hitLocation)
 {
-	// no need to protect pointers as added in construction ???
 	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
 }
 

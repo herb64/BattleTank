@@ -41,15 +41,12 @@ void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 {
-	if (!Barrel)
+	if (!ensure(Barrel))
 	{
 		UE_LOG(LogTemp, Error, TEXT("No Barrel Component - Check BP_Tank SetBarrelReference call"));
 		return;
 	}
 
-	// Using component location here, later go for socket location when creating
-	// a socket for the projectile at the top of the barrel
-	//FVector barrelLocation = Barrel->GetComponentLocation();
 	FVector startLocation = Barrel->GetSocketLocation(FName("Projectile"));
 
 	if (Barrel->bDrawDebugLines) {
@@ -59,7 +56,7 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 			hitLocation,		// Hit Location
 			FColor::Red,
 			false,
-			4.0f,
+			2.0f,
 			0,
 			2.0f
 		);
@@ -84,6 +81,8 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 	)) {
 		FVector AimDirection = OutSuggestedVelocity.GetSafeNormal();
 
+		UE_LOG(LogTemp, Warning, TEXT("OutSuggestedVelocity Yaw: %f"), OutSuggestedVelocity.Rotation().Yaw);
+
 		if (Barrel->bDrawDebugLines) {
 			DrawDebugLine(
 				GetWorld(),
@@ -91,12 +90,33 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 				startLocation + AimDirection * 300.0f,			// 3m into AimDirection
 				FColor::Yellow,
 				false,
-				4.0f,
+				2.0f,
 				0,
 				3.0f
 			);
 		}
+
+		// OLD
 		MoveBarrelTowards(AimDirection);
+
+		// NEW use own YAW calculation instead of yaw component of velocity vector
+		// returned by SuggestProjectileVelocity()
+		// implement elevation and rotation here instead of calling extra MoveBarrelTowards() function
+		//FVector BarrelLocation = Turret->GetSocketLocation(FName("Barrel"));
+		/*FVector BarrelLocation = Barrel->GetComponentLocation();
+		FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
+		// EXPERIMENT: GetComponentRotation() vs. GetForwardVector().Rotation()
+		// Almost same results, BUT: Roll is not exactly 0.0 - see my documentation
+		//FRotator BarrelRotator = Barrel->GetComponentRotation();
+
+		FRotator AimRotator = AimDirection.Rotation();
+		Barrel->Elevate((AimRotator - BarrelRotator).Pitch);
+		
+		FRotator YawRotator = (hitLocation - BarrelLocation).Rotation();
+		UE_LOG(LogTemp, Error, TEXT("Barrel Yaw: %f, Hitlocation Yaw: %f"), BarrelRotator.Yaw, YawRotator.Yaw);
+		FRotator DeltaRotator = YawRotator - BarrelRotator;
+		Turret->Rotate(FMath::Abs(DeltaRotator.Yaw) < 180 ? DeltaRotator.Yaw : -DeltaRotator.Yaw);*/
+
 	} else {
 		UE_LOG(LogTemp, Error, TEXT("%s: No aiming direction could be determined"), *GetOwner()->GetName());
 	}
@@ -104,15 +124,20 @@ void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 
 void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 {
-	// Barrel inherits from USceneComponent - a lot of members from this are used here!!!
-	// EXPERIMENT: GetComponentRotation() vs. GetForwardVector().Rotation()
-	// Same results, BUT: Roll is not exactly 0.0 - see my documentation
 	FRotator AimRotator = AimDirection.Rotation();
 	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
 	FRotator DeltaRotator = AimRotator - BarrelRotator;
-	FRotator TurretRotator = Turret->GetForwardVector().Rotation();
-	FRotator DeltaRotator2 = AimRotator - TurretRotator;
+
 	Barrel->Elevate(DeltaRotator.Pitch);
-	Turret->Rotate(DeltaRotator2.Yaw);
+
+	//FRotator TurretRotator = Turret->GetForwardVector().Rotation();
+	//DeltaRotator = AimRotator - TurretRotator;
+	
+	if (FMath::Abs(DeltaRotator.Yaw) < 180) {
+		Turret->Rotate(DeltaRotator.Yaw);
+	} else 	{
+		Turret->Rotate(-DeltaRotator.Yaw);
+	}
+
 }
 

@@ -44,21 +44,21 @@ UTankTurret::UTankTurret()
  * In the next frame, the same happens in the other direction.
  * The result is the turret jumping endlessly between 2 positions, like a dog wagging its tail.
  */
-void UTankTurret::Rotate(float TargetHitYawAngle)
+void UTankTurret::Rotate(float TargetHitYawAngle) // TODO declaration var name not consistent
 {
 	// Using inherited USceneComponent members!!
 	
-	// ORIGINAL CODE
-	float RelativeSpeed = FMath::Clamp(TargetHitYawAngle, -1.0f, 1.0f);
+	// ORIGINAL CODE - just clamping angle parameter and using as speed factor
+	/*float RelativeSpeed = FMath::Clamp(TargetHitYawAngle, -1.0f, 1.0f);
 	float RotationDelta = MaxRotationSpeed * RelativeSpeed * GetWorld()->DeltaTimeSeconds;
 	float NewRotation = RelativeRotation.Yaw + RotationDelta;
-	SetRelativeRotation(FRotator(0.0f, NewRotation, 0.0f));
+	SetRelativeRotation(FRotator(0.0f, NewRotation, 0.0f));*/
 
-	// NEW CODE
-	/*float MaxLimitedAngle = MaxRotationSpeed * FMath::Sign(TargetHitYawAngle) * GetWorld()->DeltaTimeSeconds;
+	// NEW CODE - using parameter as angle and limit if speed would be exceeded
+	float MaxLimitedAngle = MaxRotationSpeed * FMath::Sign(TargetHitYawAngle) * GetWorld()->DeltaTimeSeconds;
 	SetRelativeRotation(FRotator(0.0f,
 		FMath::Abs(TargetHitYawAngle) > FMath::Abs(MaxLimitedAngle) ? 
 		RelativeRotation.Yaw + MaxLimitedAngle : 
 		RelativeRotation.Yaw + TargetHitYawAngle,
-		0.0f));*/
+		0.0f));
 }

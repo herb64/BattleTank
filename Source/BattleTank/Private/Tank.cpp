@@ -5,6 +5,8 @@
 #include "TankAimComponent.h"
 #include "Projectile.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
+#include "TankMovementComponent.h"
 
 
 // Sets default values
@@ -13,6 +15,8 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = false;	// Tank does not need to tick
 	// no need to protect pointers as added in construction ???
 	TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
+	// no longer have "inherited" movement component - add this as custom component now
+	//TankMovementComponent = CreateDefaultSubobject <UTankMovementComponent>(FName("Movement Component"));
 }
 
 
@@ -20,6 +24,9 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
+	//TankMovementComponent = Cast<UTankMovementComponent>(GetDefaultSubobjectByName(FName("TankMovement")));
+	//if (!ensure(TankMovementComponent)) return;
+	//TankMovementComponent->InitializeViaCpp();
 }
 
 
@@ -36,12 +43,10 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimComponent->SetBarrelReference(BarrelToSet);
-	// TODO - not mentioned in course video at that point - might comment on that, but we need to initialize our local variable here
 	Barrel = BarrelToSet;
 	if (Barrel) {
-		// Try to get some infos on Collision, which is blocked by "hidecategories"
-		Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		UE_LOG(LogTemp, Warning, TEXT("%s: Barrel collision enabled = %s "), *Barrel->GetOwner()->GetName(), (Barrel->GetCollisionEnabled() ? TEXT("True") : TEXT("False")))
+		//Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		UE_LOG(LogTemp, Warning, TEXT("%s: Barrel collision %s "), *Barrel->GetOwner()->GetName(), (Barrel->GetCollisionEnabled() ? TEXT("ENABLED") : TEXT("DISABLED")));
 	}
 }
 
@@ -49,6 +54,9 @@ void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 void ATank::SetTurretReference(UTankTurret* TurretToSet)
 {
 	TankAimComponent->SetTurretReference(TurretToSet);
+	if (TurretToSet) {
+		UE_LOG(LogTemp, Warning, TEXT("%s: Turret collision %s "), *TurretToSet->GetOwner()->GetName(), (TurretToSet->GetCollisionEnabled() ? TEXT("ENABLED") : TEXT("DISABLED")));
+	}
 }
 
 

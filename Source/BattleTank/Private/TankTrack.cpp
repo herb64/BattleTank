@@ -18,12 +18,10 @@
 UTankTrack::UTankTrack()
 {
 #ifdef WORKAROUND
-	// We simply use the Engine Cone Basic Shape
-	static ConstructorHelpers::FObjectFinder<UStaticMesh>SM_Track(TEXT("/Game/Tank/tank_fbx_Track"));
-	UStaticMesh* TrackMesh = SM_Track.Object;
-	if (TrackMesh != nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Set track mesh %s"), *TrackMesh->GetName());
-		this->SetStaticMesh(TrackMesh);
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>SM(TEXT("/Game/Tank/tank_fbx_Track"));
+	if (SM.Succeeded()) {
+		UE_LOG(LogTemp, Warning, TEXT("Set Static Mesh %s"), *SM.Object->GetName());
+		this->SetStaticMesh(SM.Object);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Could not set static mesh to component"));

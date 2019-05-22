@@ -19,14 +19,11 @@
 UTankTurret::UTankTurret()
 {
 #ifdef WORKAROUND
-	// We simply use the Engine Cone Basic Shape
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>SM(TEXT("/Game/Tank/Tank_fbx_Turret"));
-	UStaticMesh* Mesh = SM.Object;
-	if (Mesh != nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Set Static Mesh %s"), *Mesh->GetName());
-		this->SetStaticMesh(Mesh);
-	}
-	else {
+	if (SM.Succeeded()) {
+		UE_LOG(LogTemp, Warning, TEXT("Set Static Mesh %s"), *SM.Object->GetName());
+		this->SetStaticMesh(SM.Object);
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("Could not set static mesh to component"));
 	}
 #endif

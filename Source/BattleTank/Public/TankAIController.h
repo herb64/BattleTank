@@ -15,8 +15,11 @@ class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 
-	protected:
-		// Self made override of BeginPlay() - virtual function in Actor class
-		virtual void BeginPlay() override;
-		virtual void Tick(float DeltaSeconds) override;
+protected:
+	// Self made override of BeginPlay() - virtual function in Actor class
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+private:
+	float AcceptanceRadius = 3000.0f;
 };

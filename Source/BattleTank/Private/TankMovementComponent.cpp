@@ -69,5 +69,21 @@ void UTankMovementComponent::IntendTurnLeft(float Throw)
 {
 	if (!ensure(LeftTrack) || !ensure(RightTrack)) return;
 	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(+Throw);
+	RightTrack->SetThrottle(-Throw);
+}
+
+
+void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
+{
+	// NO call to Super::RequestDirectMove - we completely replace functionality!
+
+	auto IntendedMoveDirection = MoveVelocity.GetSafeNormal();
+	auto CurrentLocalDirection = GetOwner()->GetActorForwardVector().GetSafeNormal();
+	float ForwardThrow = FVector::DotProduct(CurrentLocalDirection, IntendedMoveDirection);
+
+	FVector RightThrowVector = FVector::CrossProduct(CurrentLocalDirection, IntendedMoveDirection);
+	float RightThrow = RightThrowVector.Z;
+
+	IntendMoveForward(ForwardThrow);
+	IntendTurnRight(RightThrow);
 }

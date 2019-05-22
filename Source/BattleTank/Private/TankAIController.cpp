@@ -38,6 +38,8 @@ void ATankAIController::Tick(float DeltaSeconds)
 		return;
 	}
 
+	MoveToActor(pPlayerTank, AcceptanceRadius);
+
 	pControlledTank->AimAt(pPlayerTank->GetActorLocation());
 
 	//pControlledTank->Fire();

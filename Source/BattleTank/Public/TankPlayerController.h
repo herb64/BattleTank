@@ -15,15 +15,13 @@ UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-
-
-	public:
-		ATank* GetControlledTank() const;
-
+		
 	protected:
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaSeconds) override;
+		UFUNCTION(BlueprintCallable, Category = "Setup")
+		ATank* GetControlledTank() const;
 
 	private:
 		// makes the tank pointing the barrel towards the destination where crosshair

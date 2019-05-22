@@ -132,3 +132,6 @@ void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 
 }
 
+EFiringStatus UTankAimComponent::GetFiringStatus(void) {
+	return FiringStatus;
+}

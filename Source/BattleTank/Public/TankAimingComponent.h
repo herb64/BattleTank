@@ -15,6 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ATankAimingComponent();
 
+	// Getter for firingstatus enum... or should we just expose the value?
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

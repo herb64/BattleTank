@@ -14,19 +14,24 @@ ATank::ATank()
 {
 	PrimaryActorTick.bCanEverTick = false;	// Tank does not need to tick
 	// no need to protect pointers as added in construction ???
-	TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
+	// no longer have "inherited" aim component - now blueprint spawnable custom component
+	//TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
 	// no longer have "inherited" movement component - add this as custom component now
 	//TankMovementComponent = CreateDefaultSubobject <UTankMovementComponent>(FName("Movement Component"));
+
+	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: Constructor TANK in C++"), *GetName())
 }
 
 
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
-	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: BeginPlay TANK in C++"), *GetName())
+	Super::BeginPlay();		// NEEDED, otherwise Blueprint BeginPlay() not called!!!
 	//TankMovementComponent = Cast<UTankMovementComponent>(GetDefaultSubobjectByName(FName("TankMovement")));
 	//if (!ensure(TankMovementComponent)) return;
 	//TankMovementComponent->InitializeViaCpp();
+	
 }
 
 
@@ -38,30 +43,9 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-
-// This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
-void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
-{
-	TankAimComponent->SetBarrelReference(BarrelToSet);
-	Barrel = BarrelToSet;
-	if (Barrel) {
-		//Barrel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		UE_LOG(LogTemp, Warning, TEXT("%s: Barrel collision %s "), *Barrel->GetOwner()->GetName(), (Barrel->GetCollisionEnabled() ? TEXT("ENABLED") : TEXT("DISABLED")));
-	}
-}
-
-// This is a Blueprint Callable - Called in BP_Tank Event Graph BeginPlay()
-void ATank::SetTurretReference(UTankTurret* TurretToSet)
-{
-	TankAimComponent->SetTurretReference(TurretToSet);
-	if (TurretToSet) {
-		UE_LOG(LogTemp, Warning, TEXT("%s: Turret collision %s "), *TurretToSet->GetOwner()->GetName(), (TurretToSet->GetCollisionEnabled() ? TEXT("ENABLED") : TEXT("DISABLED")));
-	}
-}
-
-
 void ATank::AimAt(FVector hitLocation)
 {
+	if (!TankAimComponent) return;
 	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
 }
 

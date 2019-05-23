@@ -16,14 +16,13 @@ UTankAimComponent::UTankAimComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UTankAimComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
+/// Blueprint based setting
+void UTankAimComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet)
 {
 	Barrel = BarrelToSet;
-}
-
-void UTankAimComponent::SetTurretReference(UTankTurret* TurretToSet)
-{
 	Turret = TurretToSet;
+	if (!ensure(Barrel) || !ensure(Turret)) return;
+	UE_LOG(LogTemp, Warning, TEXT("%s: AimComponent Initialize Barrel: %s, Turret: %s"), *GetOwner()->GetName(), *Barrel->GetName(), *Turret->GetName());
 }
 
 // Called when the game starts

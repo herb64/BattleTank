@@ -13,7 +13,7 @@ void UTankMovementComponent::InitializeFromWithinBlueprint(UTankTrack* LeftTrack
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
 	if (!ensure(LeftTrack) || !ensure(RightTrack)) return;
-	UE_LOG(LogTemp, Warning, TEXT("%s: InitializeFromWithinBlueprint Left: %s, Right: %s"), *GetOwner()->GetName(), *LeftTrack->GetName(), *RightTrack->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("%s: Movement Component InitializeFromWithinBlueprint Left: %s, Right: %s"), *GetOwner()->GetName(), *LeftTrack->GetName(), *RightTrack->GetName());
 }
 
 /// E X P E R I M E N T A L   C O D E   O N L Y

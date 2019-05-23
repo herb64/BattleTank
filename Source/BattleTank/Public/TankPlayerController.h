@@ -7,6 +7,7 @@
 #include "TankPlayerController.generated.h"
 
 class ATank;
+class UTankAimComponent;
 
 /**
  * 
@@ -22,6 +23,9 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 		virtual void Tick(float DeltaSeconds) override;
 		UFUNCTION(BlueprintCallable, Category = "Setup")
 		ATank* GetControlledTank() const;
+
+		UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+		void FoundAimComponent(UTankAimComponent* AimCompRef);
 
 	private:
 		// makes the tank pointing the barrel towards the destination where crosshair

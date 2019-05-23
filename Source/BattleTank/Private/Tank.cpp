@@ -23,6 +23,11 @@ void ATank::BeginPlay()
 	Super::BeginPlay();		// NEEDED, otherwise Blueprint BeginPlay() not called!!!
 }
 
+void ATank::SetTankAimComponent(UTankAimComponent* AimComp)
+{
+	TankAimComponent = AimComp;
+}
+
 
 // Called to bind functionality to input - strange, that intellisense often complains
 // about AActor not having that member function, but ATank is a Pawn! 
@@ -34,7 +39,11 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ATank::AimAt(FVector hitLocation)
 {
-	if (!TankAimComponent) return;
+	if (!TankAimComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No Aiming component in Tank::AimAt()"));
+		return;
+	}
 	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
 }
 

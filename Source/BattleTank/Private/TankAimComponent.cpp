@@ -40,6 +40,7 @@ void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
 {
+	UE_LOG(LogTemp, Warning, TEXT("TankAimComponent AimAt(%s, %f)"), *hitLocation.ToString(), LaunchSpeed);
 	if (!ensure(Barrel) || !ensure(Turret)) return;
 
 	FVector startLocation = Barrel->GetSocketLocation(FName("Projectile"));

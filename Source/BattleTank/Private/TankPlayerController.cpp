@@ -30,6 +30,7 @@ void ATankPlayerController::BeginPlay()
 	UTankAimComponent* AimComponent = ControlledTank->FindComponentByClass<UTankAimComponent>();
 	if (AimComponent) {
 		FoundAimComponent(AimComponent);
+		ControlledTank->SetTankAimComponent(AimComponent);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Player controller: no aiming component at beginplay"));

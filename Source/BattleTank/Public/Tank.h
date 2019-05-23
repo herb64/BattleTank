@@ -22,6 +22,8 @@ public:
 	ATank();
 	void AimAt(FVector hitLocation);
 
+	void SetTankAimComponent(UTankAimComponent* AimComp);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

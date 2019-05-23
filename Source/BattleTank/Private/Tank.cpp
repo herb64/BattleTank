@@ -6,19 +6,12 @@
 #include "Projectile.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
-#include "TankMovementComponent.h"
 
 
 // Sets default values
 ATank::ATank()
 {
 	PrimaryActorTick.bCanEverTick = false;	// Tank does not need to tick
-	// no need to protect pointers as added in construction ???
-	// no longer have "inherited" aim component - now blueprint spawnable custom component
-	//TankAimComponent = CreateDefaultSubobject <UTankAimComponent>(FName("Aim Component"));
-	// no longer have "inherited" movement component - add this as custom component now
-	//TankMovementComponent = CreateDefaultSubobject <UTankMovementComponent>(FName("Movement Component"));
-
 	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: Constructor TANK in C++"), *GetName())
 }
 
@@ -28,10 +21,6 @@ void ATank::BeginPlay()
 {
 	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: BeginPlay TANK in C++"), *GetName())
 	Super::BeginPlay();		// NEEDED, otherwise Blueprint BeginPlay() not called!!!
-	//TankMovementComponent = Cast<UTankMovementComponent>(GetDefaultSubobjectByName(FName("TankMovement")));
-	//if (!ensure(TankMovementComponent)) return;
-	//TankMovementComponent->InitializeViaCpp();
-	
 }
 
 

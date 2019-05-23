@@ -2,7 +2,6 @@
 
 
 #include "Tank.h"
-#include "TankAimComponent.h"
 #include "Projectile.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
@@ -21,7 +20,6 @@ void ATank::BeginPlay()
 {
 	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: BeginPlay TANK in C++"), *GetName())
 	Super::BeginPlay();		// NEEDED, otherwise Blueprint BeginPlay() not called!!!
-	TankAimComponent = FindComponentByClass<UTankAimComponent>();
 }
 
 // Called to bind functionality to input - strange, that intellisense often complains
@@ -30,16 +28,6 @@ void ATank::BeginPlay()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void ATank::AimAt(FVector hitLocation)
-{
-	if (!TankAimComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No Aiming component in Tank::AimAt()"));
-		return;
-	}
-	TankAimComponent->AimAt(hitLocation, LaunchSpeed);
 }
 
 void ATank::Fire()
@@ -67,6 +55,7 @@ void ATank::Fire()
 
 	if (Projectile)
 	{
+		float LaunchSpeed = 4000.0f;		// Fire not in focus - TODO for now just keek compiler quiet
 		Projectile->Launch(LaunchSpeed);
 	}
 	else {

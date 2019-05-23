@@ -38,7 +38,7 @@ void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UTankAimComponent::AimAt(FVector hitLocation, float LaunchSpeed)
+void UTankAimComponent::AimAt(FVector hitLocation)
 {
 	UE_LOG(LogTemp, Warning, TEXT("TankAimComponent AimAt(%s, %f)"), *hitLocation.ToString(), LaunchSpeed);
 	if (!ensure(Barrel) || !ensure(Turret)) return;

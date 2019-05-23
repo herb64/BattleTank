@@ -2,7 +2,7 @@
 
 
 #include "TankAIController.h"
-#include "Tank.h"
+#include "TankAimComponent.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
@@ -19,28 +19,19 @@ void ATankAIController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	APlayerController* pPlayerController = GetWorld()->GetFirstPlayerController();
-	if (!pPlayerController)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No player controller"));
-		return;
-	}
-	ATank* pPlayerTank = Cast<ATank>(pPlayerController->GetPawn());
-	if (!pPlayerTank)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No player tank"));
-		return;
-	}
-	ATank* pControlledTank = Cast<ATank>(GetPawn());
-	if (!pControlledTank)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No Controlled AI Tank"));
-		return;
-	}
+	if (!ensure(pPlayerController)) return;
+	
+	// Movement towards player tank
+	APawn* PlayerPawn = pPlayerController->GetPawn();
+	if (!ensure(PlayerPawn)) return;
+	MoveToActor(PlayerPawn, AcceptanceRadius);
 
-	MoveToActor(pPlayerTank, AcceptanceRadius);
-
-	pControlledTank->AimAt(pPlayerTank->GetActorLocation());
-
+	// Aiming towards playertank
+	UTankAimComponent* AimComponent = GetPawn()->FindComponentByClass<UTankAimComponent>();
+	if (!ensure(AimComponent)) return;
+	AimComponent->AimAt(PlayerPawn->GetActorLocation());
+	
+	// Firing at playertank - TODO needs fix!!
 	//pControlledTank->Fire();
 }
 

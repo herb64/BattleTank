@@ -2,7 +2,6 @@
 
 
 #include "TankPlayerController.h"
-#include "tank.h"
 #include "TankAimComponent.h"
 
 // Since 4.16, includes are needed to make autocompletion in VS work. 
@@ -13,24 +12,15 @@
 
 
 
-/// Get pointer to the Tank object controlled by this Player Controller
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	auto ControlledTank = GetControlledTank();
-	if (!ensure(ControlledTank)) return;
 
 	//UTankAimComponent* AimComponent = Cast<UTankAimComponent>(ControlledTank->GetComponentByClass(TSubclassOf<UTankAimComponent>()));
-	UTankAimComponent* AimComponent = ControlledTank->FindComponentByClass<UTankAimComponent>();
+	UTankAimComponent* AimComponent = GetPawn()->FindComponentByClass<UTankAimComponent>();
 	if (AimComponent) {
 		FoundAimComponent(AimComponent);
-	}
-	else {
+	} else {
 		UE_LOG(LogTemp, Error, TEXT("Player controller: no aiming component at beginplay"));
 	}
 }
@@ -45,12 +35,15 @@ void ATankPlayerController::Tick(float DeltaSeconds)
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!GetControlledTank()) return;
+	// in case we died and depossessed the pawn, we need to check
+	UTankAimComponent* AimComponent = GetPawn()->FindComponentByClass<UTankAimComponent>();
+
+	if (!ensure(AimComponent)) return;
 
 	FVector OutHit = FVector(0.0f, 0.0f, 1.0f);
 	if (!GetSightRayHitLocation(OutHit)) return;
 	
-	GetControlledTank()->AimAt(OutHit);
+	AimComponent->AimAt(OutHit);
 }
 
 bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) const

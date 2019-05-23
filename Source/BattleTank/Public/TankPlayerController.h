@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
-class ATank;
 class UTankAimComponent;
 
 /**
@@ -21,8 +20,6 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 		// Self made override of BeginPlay() - virtual function in Actor class
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaSeconds) override;
-		UFUNCTION(BlueprintCallable, Category = "Setup")
-		ATank* GetControlledTank() const;
 
 		UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
 		void FoundAimComponent(UTankAimComponent* AimCompRef);

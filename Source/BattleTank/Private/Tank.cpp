@@ -21,13 +21,8 @@ void ATank::BeginPlay()
 {
 	UE_LOG(LogTemp, Warning, TEXT("[%s] HFCM: BeginPlay TANK in C++"), *GetName())
 	Super::BeginPlay();		// NEEDED, otherwise Blueprint BeginPlay() not called!!!
+	TankAimComponent = FindComponentByClass<UTankAimComponent>();
 }
-
-void ATank::SetTankAimComponent(UTankAimComponent* AimComp)
-{
-	TankAimComponent = AimComp;
-}
-
 
 // Called to bind functionality to input - strange, that intellisense often complains
 // about AActor not having that member function, but ATank is a Pawn! 

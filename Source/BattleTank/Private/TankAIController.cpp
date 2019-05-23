@@ -3,29 +3,15 @@
 
 #include "TankAIController.h"
 #include "Tank.h"
-#include "TankAimComponent.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
 
 
-/// BeginPlay manually overridden to initialize stuff
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ATank* ControlledTank = Cast<ATank>(GetPawn());
-	if (!ensure(ControlledTank)) return;
-
-	//UTankAimComponent* AimComponent = Cast<UTankAimComponent>(ControlledTank->GetComponentByClass(TSubclassOf<UTankAimComponent>()));
-	UTankAimComponent* AimComponent = ControlledTank->FindComponentByClass<UTankAimComponent>();
-	if (AimComponent) {
-		ControlledTank->SetTankAimComponent(AimComponent);
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("AI controller: no aiming component at beginplay"));
-	}
 }
 
 

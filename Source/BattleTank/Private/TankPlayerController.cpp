@@ -8,7 +8,6 @@
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "Engine/World.h"
 #include "Engine/Public/DrawDebugHelpers.h"	// e.g. DrawDebugLine
-
 #include <EngineGlobals.h>
 #include <Runtime/Engine/Classes/Engine/Engine.h>
 
@@ -30,7 +29,6 @@ void ATankPlayerController::BeginPlay()
 	UTankAimComponent* AimComponent = ControlledTank->FindComponentByClass<UTankAimComponent>();
 	if (AimComponent) {
 		FoundAimComponent(AimComponent);
-		ControlledTank->SetTankAimComponent(AimComponent);
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("Player controller: no aiming component at beginplay"));

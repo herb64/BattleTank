@@ -4,6 +4,7 @@
 #include "TankAimComponent.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
 // Since 4.16, includes are needed to make autocompletion in VS work. 
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
@@ -28,6 +29,8 @@ void UTankAimComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* Turret
 // Called when the game starts
 void UTankAimComponent::BeginPlay()
 {
+	// Calling Super:: makes it call the blueprint as well. Not having an overridden
+	// Beginplay at all would do the same - so we can remove it for code shortness
 	Super::BeginPlay();
 }
 
@@ -40,7 +43,6 @@ void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UTankAimComponent::AimAt(FVector hitLocation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("TankAimComponent AimAt(%s, %f)"), *hitLocation.ToString(), LaunchSpeed);
 	if (!ensure(Barrel) || !ensure(Turret)) return;
 
 	FVector startLocation = Barrel->GetSocketLocation(FName("Projectile"));
@@ -134,4 +136,31 @@ void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
 
 EFiringStatus UTankAimComponent::GetFiringStatus(void) {
 	return FiringStatus;
+}
+
+void UTankAimComponent::Fire()
+{
+	// See also: FPlatformTime::Seconds() - returns double...
+	// We only fire within minimal intervals set within blueprint Parameter ReloadTime
+	if (GetWorld()->GetTimeSeconds() - lastFireTime < ReloadTime) return;
+	if (!ensure(Barrel && ProjectileBlueprint)) return;
+
+	/// See http://api.unrealengine.com/INT/API/Runtime/Engine/Engine/UWorld/SpawnActor/4/?lang=ja
+
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
+		ProjectileBlueprint,
+		Barrel->GetSocketLocation(FName("Projectile")),
+		Barrel->GetSocketRotation(FName("Projectile"))		// needed for forward vector at launch
+		);
+
+	if (Projectile)
+	{
+		float LaunchSpeed = 4000.0f;		// Fire not in focus - TODO for now just keek compiler quiet
+		Projectile->Launch(LaunchSpeed);
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("%s: No Projectile spawned"), *GetName());
+	}
+
+	lastFireTime = GetWorld()->GetTimeSeconds();
 }

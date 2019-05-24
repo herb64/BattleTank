@@ -2,7 +2,6 @@
 
 
 #include "Tank.h"
-#include "Projectile.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
 
@@ -28,39 +27,4 @@ void ATank::BeginPlay()
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void ATank::Fire()
-{
-	// See also: FPlatformTime::Seconds() - returns double...
-	// We only fire within minimal intervals set within blueprint Parameter ReloadTime
-	if (GetWorld()->GetTimeSeconds() - lastFireTime < ReloadTime) return;
-
-
-	UE_LOG(LogTemp, Error, TEXT("FIRE"));
-	if (!Barrel)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No Barrel at FIRE"));
-		return;
-	}
-
-	/// See http://api.unrealengine.com/INT/API/Runtime/Engine/Engine/UWorld/SpawnActor/4/?lang=ja
-
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-		ProjectileBlueprint,
-		Barrel->GetSocketLocation(FName("Projectile")),
-		//FRotator::ZeroRotator
-		Barrel->GetSocketRotation(FName("Projectile"))		// needed for forward vector at launch
-		);
-
-	if (Projectile)
-	{
-		float LaunchSpeed = 4000.0f;		// Fire not in focus - TODO for now just keek compiler quiet
-		Projectile->Launch(LaunchSpeed);
-	}
-	else {
-		UE_LOG(LogTemp, Error, TEXT("%s: No Projectile spawned"), *GetName());
-	}
-
-	lastFireTime = GetWorld()->GetTimeSeconds();
 }

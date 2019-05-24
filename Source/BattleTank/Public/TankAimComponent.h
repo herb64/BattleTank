@@ -19,6 +19,7 @@ enum class EFiringStatus : uint8
 // Forward declaration for UTankBarrel
 class UTankBarrel;
 class UTankTurret;
+class AProjectile;
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) ) //already spawnable
@@ -35,7 +36,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Firing")
-	EFiringStatus FiringStatus = EFiringStatus::Locked;
+	EFiringStatus FiringStatus = EFiringStatus::Reloading;
 
 public:	
 	// Called every frame
@@ -49,6 +50,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Firing")
 	EFiringStatus GetFiringStatus();
 
+	UFUNCTION(BlueprintCallable, Category = "Firing")
+	void Fire();
+
+	/// Instead of using AActor* pointer, use TSubclassOf for type safety to make Editor only offer valid choices to the Artist
+	/// https://docs.unrealengine.com/latest/INT/Programming/UnrealArchitecture/TSubclassOf
+	// The Projectile Class to be used (BTW: Choice limited by TSubclassOf)
+	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Projectile Class"))
+	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	// Reload time, determines maximum fire rate
+	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Reload time"))
+	float ReloadTime = 4.0f;
+
 private:
 	// Replacing UStaticMeshComponent by our C++ class. Add forward declaration
 	UTankBarrel* Barrel = nullptr;
@@ -59,5 +73,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Projectile Speed", UIMin = "3000.0", UIMax = "30000.0", ClampMin = "3000.0", ClampMax = "30000.0"))
 	float LaunchSpeed = 10000.0f;
 	
+	float lastFireTime;
 };
 

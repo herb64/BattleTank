@@ -32,6 +32,6 @@ void ATankAIController::Tick(float DeltaSeconds)
 	AimComponent->AimAt(PlayerPawn->GetActorLocation());
 	
 	// Firing at playertank - TODO needs fix!!
-	//pControlledTank->Fire();
+	//AimComponent->Fire();
 }
 

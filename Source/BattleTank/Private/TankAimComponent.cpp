@@ -13,7 +13,6 @@
 // Sets default values for this component's properties
 UTankAimComponent::UTankAimComponent()
 {
-	// TODO: should the aim component tick??
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -26,19 +25,31 @@ void UTankAimComponent::Initialize(UTankBarrel* BarrelToSet, UTankTurret* Turret
 	UE_LOG(LogTemp, Warning, TEXT("%s: AimComponent Initialize Barrel: %s, Turret: %s"), *GetOwner()->GetName(), *Barrel->GetName(), *Turret->GetName());
 }
 
-// Called when the game starts
+
 void UTankAimComponent::BeginPlay()
 {
 	// Calling Super:: makes it call the blueprint as well. Not having an overridden
 	// Beginplay at all would do the same - so we can remove it for code shortness
 	Super::BeginPlay();
+	// Makes first fire() call after starting game not fire and set state to reloading
+	lastFireTime = GetWorld()->GetTimeSeconds();
+	FiringStatus = EFiringStatus::Reloading;
 }
 
 
-// Called every frame
-void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UTankAimComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (GetWorld()->GetTimeSeconds() - lastFireTime < ReloadTime)
+	{
+		FiringStatus = EFiringStatus::Reloading;
+	}
+	else if (ensure(Barrel) && AimDirection.Equals(Barrel->GetForwardVector(), 0.01f)) {
+		FiringStatus = EFiringStatus::Locked;
+	}
+	else {
+		FiringStatus = EFiringStatus::Aiming;
+	}
 }
 
 void UTankAimComponent::AimAt(FVector hitLocation)
@@ -77,7 +88,7 @@ void UTankAimComponent::AimAt(FVector hitLocation)
 		0.0f,
 		ESuggestProjVelocityTraceOption::DoNotTrace			// NEEDED, ELSE GETTING MANY NON RESULTS
 	)) {
-		FVector AimDirection = OutSuggestedVelocity.GetSafeNormal();
+		AimDirection = OutSuggestedVelocity.GetSafeNormal();
 
 		if (Barrel->bDrawDebugLines) {
 			DrawDebugLine(
@@ -92,18 +103,13 @@ void UTankAimComponent::AimAt(FVector hitLocation)
 			);
 		}
 
-		// OLD CODE - using the MoveBarrelTowards() function - defactored...
-		//MoveBarrelTowards(AimDirection);
-
-		// NEW CODE - Barrel Elevation
+		// Barrel Elevation
 		FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
-		//FRotator BarrelRotator = Barrel->GetComponentRotation();
-		// GetComponentRotation() vs. GetForwardVector().Rotation() Almost same results, BUT: Roll is not exactly 0.0 - see my notes
+		//FRotator BarrelRotator = Barrel->GetComponentRotation(); // Same, just Roll != 0.0
 		FRotator AimRotator = AimDirection.Rotation();
 		Barrel->Elevate((AimRotator - BarrelRotator).Pitch);
 
-		// NEW CODE - Turret Rotation - calculate Yaw ourselves instead of using Yaw from AimRotator
-		//FVector BarrelLocation = Turret->GetSocketLocation(FName("Barrel"));
+		// Turret Rotation - calculate Yaw ourselves instead of using Yaw from AimRotator
 		FVector BarrelLocation = Barrel->GetComponentLocation();
 		FRotator YawRotator = (hitLocation - BarrelLocation).Rotation();
 		FRotator DeltaRotator = YawRotator - BarrelRotator;
@@ -114,26 +120,6 @@ void UTankAimComponent::AimAt(FVector hitLocation)
 }
 
 
-/// No more using this function...
-void UTankAimComponent::MoveBarrelTowards(FVector AimDirection)
-{
-	FRotator AimRotator = AimDirection.Rotation();
-	FRotator BarrelRotator = Barrel->GetForwardVector().Rotation();
-	FRotator DeltaRotator = AimRotator - BarrelRotator;
-
-	Barrel->Elevate(DeltaRotator.Pitch);
-
-	//FRotator TurretRotator = Turret->GetForwardVector().Rotation();
-	//DeltaRotator = AimRotator - TurretRotator;
-	
-	if (FMath::Abs(DeltaRotator.Yaw) < 180) {
-		Turret->Rotate(DeltaRotator.Yaw);
-	} else 	{
-		Turret->Rotate(-DeltaRotator.Yaw);
-	}
-
-}
-
 EFiringStatus UTankAimComponent::GetFiringStatus(void) {
 	return FiringStatus;
 }
@@ -142,10 +128,10 @@ void UTankAimComponent::Fire()
 {
 	// See also: FPlatformTime::Seconds() - returns double...
 	// We only fire within minimal intervals set within blueprint Parameter ReloadTime
-	if (GetWorld()->GetTimeSeconds() - lastFireTime < ReloadTime) return;
-	if (!ensure(Barrel && ProjectileBlueprint)) return;
-
-	/// See http://api.unrealengine.com/INT/API/Runtime/Engine/Engine/UWorld/SpawnActor/4/?lang=ja
+	if (FiringStatus == EFiringStatus::Reloading) return;
+	
+	if (!ensure(ProjectileBlueprint)) return;
+	if (!ensure(Barrel)) return;
 
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
 		ProjectileBlueprint,
@@ -155,8 +141,8 @@ void UTankAimComponent::Fire()
 
 	if (Projectile)
 	{
-		float LaunchSpeed = 4000.0f;		// Fire not in focus - TODO for now just keek compiler quiet
 		Projectile->Launch(LaunchSpeed);
+		FiringStatus = EFiringStatus::Reloading;	// just to make it clean
 	}
 	else {
 		UE_LOG(LogTemp, Error, TEXT("%s: No Projectile spawned"), *GetName());

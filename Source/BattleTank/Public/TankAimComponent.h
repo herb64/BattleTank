@@ -10,9 +10,9 @@
 UENUM()
 enum class EFiringStatus : uint8
 {
-	Reloading,
-	Aiming,
-	Locked
+	Reloading,		// cannot fire, is still loading depending on reload time (red)
+	Aiming,			// can fire, but still aiming (amber)
+	Locked			// can fire, target is locked (green)
 };
 
 
@@ -35,12 +35,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	// Firing status read by Widget Blueprint to set color of crosshair
 	UPROPERTY(BlueprintReadOnly, Category = "Firing")
 	EFiringStatus FiringStatus = EFiringStatus::Reloading;
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AimAt(FVector hitLocation);
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void Initialize(UTankBarrel* BarrelToSet, UTankTurret* TurretToSet);
@@ -67,12 +67,17 @@ private:
 	// Replacing UStaticMeshComponent by our C++ class. Add forward declaration
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
-	void MoveBarrelTowards(FVector AimDirection);
+	//void MoveBarrelTowards(FVector AimDirection);
 
 	// Speed of Projectile. This is used to calculate the aiming direction in combination with the barrel endpoint and the desired hit location.
 	UPROPERTY(EditDefaultsOnly, Category = Setup, meta = (DisplayName = "Projectile Speed", UIMin = "3000.0", UIMax = "30000.0", ClampMin = "3000.0", ClampMax = "30000.0"))
 	float LaunchSpeed = 10000.0f;
 	
 	float lastFireTime;
+
+	// Tick() itself is final and cannot be overridden, but we have TickComponent
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction) override;
+	
+	FVector AimDirection = FVector(0.0f, 0.0f, 1.0f);
 };
 

@@ -103,9 +103,8 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector lookDirection, FVec
 		))
 	{
 		OutHitLocation = hitResult.Location;
-		//UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *hitResult.GetActor()->GetName());
 		// https://wiki.unrealengine.com/Logs,_Printing_Messages_To_Yourself_During_Runtime
-		GEngine->AddOnScreenDebugMessage(1, 0.5f, FColor::Orange, FString::Printf(TEXT("Hit: %s"), *hitResult.GetActor()->GetName()));
+		GEngine->AddOnScreenDebugMessage(1, 0.5f, FColor::Orange, FString::Printf(TEXT("Hit: %s (%s)"), *hitResult.GetActor()->GetName(), *hitResult.GetActor()->GetClass()->GetName()));
 		return true;
 	}
 

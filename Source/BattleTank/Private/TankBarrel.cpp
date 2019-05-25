@@ -23,5 +23,5 @@ void UTankBarrel::Elevate(float TargetHitPitchAngle)	// TODO declaration var nam
 	float RawNewElevation = FMath::Abs(TargetHitPitchAngle) > FMath::Abs(MaxLimitedAngle) ?
 		RelativeRotation.Pitch + MaxLimitedAngle :
 		RelativeRotation.Pitch + TargetHitPitchAngle;
-	SetRelativeRotation(FRotator(FMath::Clamp(RawNewElevation, MinimumElevation, MaximumElevation)));
+	SetRelativeRotation(FRotator(FMath::Clamp(RawNewElevation, MinimumElevation, MaximumElevation), 0.0f, 0.0f));
 }

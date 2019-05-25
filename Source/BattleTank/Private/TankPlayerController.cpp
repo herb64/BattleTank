@@ -36,6 +36,7 @@ void ATankPlayerController::Tick(float DeltaSeconds)
 void ATankPlayerController::AimTowardsCrosshair()
 {
 	// in case we died and depossessed the pawn, we need to check
+	if (!GetPawn()) return;
 	UTankAimComponent* AimComponent = GetPawn()->FindComponentByClass<UTankAimComponent>();
 
 	if (!ensure(AimComponent)) return;

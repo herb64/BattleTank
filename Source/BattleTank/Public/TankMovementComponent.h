@@ -34,11 +34,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 	void InitializeFromWithinBlueprint(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
 
+	UFUNCTION(BlueprintCallable, Category = Debug)
+	void ToggleCorrectSidewaysMovement();
+
 	virtual void RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed) override;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction) override;
 
 private:
 	UTankTrack *LeftTrack = nullptr;
 	UTankTrack *RightTrack = nullptr;
+
+	bool sidewaysCorrectionActive = false;
 
 	// Maximum Speed of the tank in km/h
 	UPROPERTY(EditDefaultsOnly, Category = Movability, meta = (DisplayName = "Max Speed", UIMin = "30.0", UIMax = "90.0", ClampMin = "30.0", ClampMax = "90.0"))

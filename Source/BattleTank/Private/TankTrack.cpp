@@ -30,7 +30,6 @@ UTankTrack::UTankTrack()
 }
 
 
-
 void UTankTrack::SetThrottle(float Throttle)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%s: Throttle set: %f"), *GetName(), Throttle);

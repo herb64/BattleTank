@@ -86,15 +86,15 @@ void UTankMovementComponent::IntendMoveBackward(float Throw)
 void UTankMovementComponent::IntendTurnRight(float Throw)
 {
 	if (!ensure(LeftTrack) || !ensure(RightTrack)) return;
-	LeftTrack->SetThrottle(-Throw);
-	RightTrack->SetThrottle(Throw);
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
 }
 
 void UTankMovementComponent::IntendTurnLeft(float Throw)
 {
 	if (!ensure(LeftTrack) || !ensure(RightTrack)) return;
-	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(-Throw);
+	LeftTrack->SetThrottle(-Throw);
+	RightTrack->SetThrottle(Throw);
 }
 
 

@@ -28,7 +28,7 @@ void UTankMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);	// so that it ticks in BP as well, not needed in our case, but...
 	
-	if (sidewaysCorrectionActive) {
+	/*if (sidewaysCorrectionActive) {
 		// Apply corrective force to whole tank to compensate sideways movement
 		auto TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
 
@@ -38,7 +38,7 @@ void UTankMovementComponent::TickComponent(float DeltaTime, enum ELevelTick Tick
 		auto Force = TankRoot->GetMass() * Acceleration;
 		GEngine->AddOnScreenDebugMessage(4, 2.0f, FColor::Blue, FString::Printf(TEXT("RightSpeed: %f, Correction: %s"), RightSpeed, *Force.ToString()));
 		TankRoot->AddForce(Force);	// Adding force at the tank location itself
-	}
+	}*/
 }
 
 /// E X P E R I M E N T A L   C O D E   O N L Y  --  N O T   U S E D

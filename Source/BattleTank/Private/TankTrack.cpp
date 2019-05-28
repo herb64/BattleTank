@@ -7,6 +7,8 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Delegate.h"
 
+#include <Runtime/Engine/Classes/Engine/Engine.h>
+
 
 // Just switch workaround off by commenting this
 #define WORKAROUND
@@ -39,11 +41,12 @@ void UTankTrack::BeginPlay()
 
 void UTankTrack::SetThrottle(float Throttle)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("%s: Throttle set: %f"), *GetName(), Throttle);
+	CurrentThrottle = FMath::Clamp(CurrentThrottle + Throttle, -1.0f, 1.0f);
+}
 
-	// Clamp forward vector, so that acceleration of tanks cannot be changed in editor
-	// by setting a higher scale value on the axis binding, which is used as Throttle.
-	FVector ForceApplied = GetForwardVector() * FMath::Clamp(Throttle, -1.0f, 1.0f) * MaxTrackForce;
+void UTankTrack::DriveTrack()
+{
+	FVector ForceApplied = GetForwardVector() * CurrentThrottle * MaxTrackForce;
 	FVector ForceLocation = GetComponentLocation();
 
 	// Owner is the tank. The root component is the upper component (a scene component), which
@@ -52,11 +55,24 @@ void UTankTrack::SetThrottle(float Throttle)
 	// Primitive Component has this functionality, so we cast this
 	auto TankRoot = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
-	//UE_LOG(LogTemp, Warning, TEXT("%s: Apply force: %s"), *GetName(), *ForceApplied.ToString());
-
 }
 
 void UTankTrack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s: Hit Event for %s"), *GetOwner()->GetName(), *this->GetName());
+	DriveTrack();
+	ApplySidewaysForce();
+	CurrentThrottle = 0.0f;
+}
+
+void UTankTrack::ApplySidewaysForce()
+{
+	auto TankRoot = Cast<UStaticMeshComponent>(GetOwner()->GetRootComponent());
+	auto RightSpeed = FVector::DotProduct(GetRightVector(), GetComponentVelocity());
+	auto DeltaTime = GetWorld()->GetDeltaSeconds();
+	// TODO: in video, still using half of force: really correct? Here we go for a single track, while other in the air
+	auto Acceleration = -RightSpeed / DeltaTime * GetRightVector();
+	// Force = m * a
+	auto Force = TankRoot->GetMass() * Acceleration;
+	GEngine->AddOnScreenDebugMessage(4, 1.0f, FColor::Cyan, FString::Printf(TEXT("RightSpeed: %f, Correction: %s"), RightSpeed, *Force.ToString()));
+	TankRoot->AddForce(Force);	// Adding force at the tank location itself
 }

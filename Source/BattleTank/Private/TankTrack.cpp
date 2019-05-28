@@ -5,7 +5,7 @@
 
 #include "Engine/StaticMesh.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
-
+#include "Delegate.h"
 
 
 // Just switch workaround off by commenting this
@@ -30,6 +30,13 @@ UTankTrack::UTankTrack()
 }
 
 
+void UTankTrack::BeginPlay() 
+{
+	Super::BeginPlay();
+	// AddDynamic is a Macro...
+	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit);
+}
+
 void UTankTrack::SetThrottle(float Throttle)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("%s: Throttle set: %f"), *GetName(), Throttle);
@@ -47,4 +54,9 @@ void UTankTrack::SetThrottle(float Throttle)
 	TankRoot->AddForceAtLocation(ForceApplied, ForceLocation);
 	//UE_LOG(LogTemp, Warning, TEXT("%s: Apply force: %s"), *GetName(), *ForceApplied.ToString());
 
+}
+
+void UTankTrack::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%s: Hit Event for %s"), *GetOwner()->GetName(), *this->GetName());
 }

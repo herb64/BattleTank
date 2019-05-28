@@ -47,7 +47,7 @@ private:
 
 	bool sidewaysCorrectionActive = false;
 
-	// Maximum Speed of the tank in km/h
+	// Maximum Speed of the tank in km/h not used
 	UPROPERTY(EditDefaultsOnly, Category = Movability, meta = (DisplayName = "Max Speed", UIMin = "30.0", UIMax = "90.0", ClampMin = "30.0", ClampMax = "90.0"))
 	float MaxTankSpeed = 30.0f;
 

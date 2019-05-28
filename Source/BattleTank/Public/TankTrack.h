@@ -32,4 +32,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Driving, meta = (DisplayName = "Dummy", UIMin = "100000.0", UIMax = "2000000.0", ClampMin = "100000.0", ClampMax = "2000000.0"))
 	float Dummy2 = 1100000.0f;
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	/** To be called when tracks hit something - use for ground contact test */
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };

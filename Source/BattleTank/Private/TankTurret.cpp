@@ -10,7 +10,7 @@
 
 
 // Just switch workaround off by commenting this
-#define WORKAROUND
+//#define WORKAROUND
 
 /*
  * W O R K A R O U N D   F O R   V A N I S H I N G   S T A T I C  M E S H
@@ -59,3 +59,4 @@ void UTankTurret::Rotate(float TargetHitYawAngle) // TODO declaration var name n
 		RelativeRotation.Yaw + TargetHitYawAngle,
 		0.0f));
 }
+

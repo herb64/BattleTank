@@ -18,12 +18,14 @@ void ATankAIController::BeginPlay()
 void ATankAIController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// TODO - for one player only, what about multiple players?
 	APlayerController* pPlayerController = GetWorld()->GetFirstPlayerController();
 	if (!ensure(pPlayerController)) return;
-	
-	// Movement towards player tank
 	APawn* PlayerPawn = pPlayerController->GetPawn();
 	if (!ensure(PlayerPawn)) return;
+
+	// Movement towards player tank
 	MoveToActor(PlayerPawn, AcceptanceRadius);
 
 	// Aiming towards playertank

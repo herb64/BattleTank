@@ -81,8 +81,6 @@ void UTankMovementComponent::IntendMoveBackward(float Throw)
 	RightTrack->SetThrottle(-Throw);
 }
 
-/// TODO: my tracks are exchanged  L <----> R :(
-
 void UTankMovementComponent::IntendTurnRight(float Throw)
 {
 	if (!ensure(LeftTrack) || !ensure(RightTrack)) return;
@@ -105,7 +103,6 @@ void UTankMovementComponent::IntendTurnLeft(float Throw)
 void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, bool bForceMaxSpeed)
 {
 	// NO call to Super::RequestDirectMove - we completely replace functionality!
-
 	auto IntendedMoveDirection = MoveVelocity.GetSafeNormal();
 	auto CurrentLocalDirection = GetOwner()->GetActorForwardVector().GetSafeNormal();
 	float ForwardThrow = FVector::DotProduct(CurrentLocalDirection, IntendedMoveDirection);

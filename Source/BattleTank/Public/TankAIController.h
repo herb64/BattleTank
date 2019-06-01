@@ -20,6 +20,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-private:
-	float AcceptanceRadius = 3000.0f;
+//private:
+	// Distance which AI tanks should keep from player tank
+	UPROPERTY(EditAnywhere, Category = Driving, meta = (DisplayName = "MinDistance", UIMin = "2000.0", UIMax = "30000.0", ClampMin = "2000.0", ClampMax = "30000.0"))
+	float AcceptanceRadius = 6000.0f;
 };
